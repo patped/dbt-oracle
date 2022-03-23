@@ -1,8 +1,5 @@
 
-{% macro oracle__test_accepted_values(model, values) %}
-
-{% set column_name = kwargs.get('column_name', kwargs.get('field')) %}
-{% set quote_values = kwargs.get('quote', True) %}
+{% macro oracle__test_accepted_values(model, column_name, values, quote=True) %}
 
 with all_values as (
 
@@ -21,7 +18,7 @@ validation_errors as (
     from all_values
     where value_field not in (
         {% for value in values -%}
-            {% if quote_values -%}
+            {% if quote -%}
             '{{ value }}'
             {%- else -%}
             {{ value }}
@@ -44,10 +41,7 @@ where {{ column_name }} is null
 
 {% endmacro %}
 
-{% macro oracle__test_relationships(model, to, field) %}
-
-{% set column_name = kwargs.get('column_name', kwargs.get('from')) %}
-
+{% macro oracle__test_relationships(model, column_name, to, field) %}
 
 select count(*) as validation_errors
 from (
