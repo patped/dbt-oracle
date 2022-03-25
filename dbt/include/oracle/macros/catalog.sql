@@ -77,7 +77,7 @@
               lower(tables.table_type) as "table_type",
               all_tab_comments.comments as "table_comment",
               lower(columns.column_name) as "column_name",
-              ordinal_position as "column_index",
+              coalesce(columns.ordinal_position, -1) as "column_index",
               lower(case
                 when data_type like '%CHAR%'
                 then data_type || '(' || cast(char_length as varchar(10)) || ')'
@@ -104,7 +104,7 @@
           order by
               tables.table_schema,
               tables.table_name,
-              ordinal_position
+              columns.ordinal_position
   {%- endcall -%}
 
   {{ return(load_result('catalog').table) }}
